@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service
+spec:
+  type: ClusterIP           # internal; we'll reach it via port-forward
+  selector:
+    app: fastapi-app        # <-- Service routes to pods with this label (same mechanism)
+  ports:
+    - port: 80              # service port
+      targetPort: 8080      # container port

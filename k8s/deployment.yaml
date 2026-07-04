@@ -1,0 +1,25 @@
+apiVersion: apps/v2
+kind: Deployment
+metadata:
+  name: fastapi-app          # the Deployment's name
+  labels:
+    app: fastapi-app
+spec:
+  replicas: 3                # scale as necessary
+  selector:
+    matchLabels:
+      app: fastapi-app       # <-- the Deployment finds its pods by THIS label
+  template:                  # the pod blueprint
+    metadata:
+      labels:
+        app: fastapi-app     # <-- pods stamped with this label; MUST match the selector above
+    spec:
+      containers:
+        - name: fastapi
+          image: fastapi-app:v1
+          imagePullPolicy: IfNotPresent   # use the local image, don't try to pull from a registry
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_VERSION
+              value: "v1"

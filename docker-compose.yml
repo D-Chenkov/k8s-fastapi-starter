@@ -1,0 +1,15 @@
+services:
+  api:                          # service #1 - your FastAPI app
+    build: .                    # build from the Dockerfile in this dir
+    ports:
+      - "8080:8080"             # host:container
+    environment:
+      - APP_VERSION=compose
+      - REDIS_HOST=redis        # <-- reach the other service by its SERVICE NAME
+    depends_on:
+      - redis                   # start redis first
+
+  redis:                        # service #2
+    image: redis:7-alpine       # pulled from a registry, not built
+    ports:
+      - "6379:6379"

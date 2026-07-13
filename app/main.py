@@ -1,11 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import joblib, os
-import mlflow.sklearn, os
 
 
-
-ODEL_URI = os.getenv("MODEL_URI", "app/model.joblib")   # default: local file (CI-friendly)
+MODEL_URI = os.getenv("MODEL_URI", "app/model.joblib")   # default: local file (CI-friendly)
 
 def _load_model(uri):
     if uri.startswith("models:") or uri.startswith("runs:"):

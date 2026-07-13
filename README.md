@@ -81,11 +81,11 @@ Note on GitOps hygiene: prefer editing `k8s/deployment.yaml` (bump the image tag
 - Rolling update: a new ReplicaSet scales up while the old scales down; the old is retained (scaled to 0) to enable rollback.
 ## Next steps (toward Portfolio Project #1)
  
-- [ ] Replace `GET /` with a `POST /predict` endpoint that loads and serves a real model (start with the iris classifier from the earlier Docker exercise).
+- [x] Replace `GET /` with a `POST /predict` endpoint that loads and serves a real model (start with the iris classifier from the earlier Docker exercise).
 - [ ] Add `readinessProbe` and `livenessProbe` pointing at `/health` so Kubernetes only routes traffic to ready pods and restarts unhealthy ones.
 - [ ] Externalize config with a ConfigMap and credentials with a Secret; mount them into the pod.
 - [ ] Add resource `requests`/`limits` to the container spec.
-- [ ] Introduce MLflow for model tracking/registry; pull the served model from the registry.
-- [ ] Add a CI/CD workflow (build image, run tests, apply manifests).
+- [x] Introduce MLflow for model tracking/registry; pull the served model from the registry.
+- [x] Add a CI/CD workflow (build image, run tests, apply manifests).
 - [ ] Package the manifests as a Helm chart for dev/staging/prod.
 - [ ] Deploy to GKE (ties to the GCP Professional ML Engineer path).

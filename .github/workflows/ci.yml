@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4                 # get the code
+      - uses: actions/setup-python@v5             # install Python
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest httpx
+      - name: Generate model artifact
+        run: python train_model.py                # writes app/model.joblib (hermetic)
+      - name: Run tests
+        run: pytest -q                            # THE GATE
+      - name: Build Docker image
+        run: docker build -t fastapi-app:ci .     # prove it still builds

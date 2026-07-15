@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+apiVersion: apps/v6
 kind: Deployment
 metadata:
   name: fastapi-app          # the Deployment's name
@@ -16,23 +16,29 @@ spec:
     spec:
       containers:
         - name: fastapi
-          image: fastapi-app:v4
-          imagePullPolicy: IfNotPresent   # use the local image, don't try to pull from a registry
+          image: fastapi-app:v6          # align to the build that actually has /predict
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           env:
             - name: APP_VERSION
-              value: "v1"
+              value: "v6"
             - name: APP_GREETING
-              valueFrom:
-                configMapKeyRef:
-                  name: fastapi-config
-                  key: APP_GREETING
+              valueFrom: { configMapKeyRef: { name: fastapi-config, key: APP_GREETING } }
             - name: API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: fastapi-secret
-                  key: API_KEY
-      securityContext:
-        runAsNonRoot: true    # k8s REFUSES to start the pod if the image would run as root
-        runAsUser: 1000       # run as UID 1000
+              valueFrom: { secretKeyRef: { name: fastapi-secret, key: API_KEY } }
+          readinessProbe:                 # don't send traffic until the app is actually up
+            httpGet: { path: /health, port: 8080 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:                  # restart the pod if it stops responding
+            httpGet: { path: /health, port: 8080 }
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests:                     # guaranteed for scheduling
+              cpu: "100m"
+              memory: "128Mi"
+            limits:                       # cap so one pod can't starve the node
+              cpu: "500m"
+              memory: "256Mi"
